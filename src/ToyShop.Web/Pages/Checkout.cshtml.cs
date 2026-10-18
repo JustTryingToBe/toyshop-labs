@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ToyShop.Core;
@@ -7,12 +6,12 @@ namespace ToyShop.Web.Pages;
 
 public class CheckoutModel : PageModel
 {
-    private readonly ProductCatalog _catalog;
+    private readonly CartStore _cartStore;
     private readonly OrderService _orders;
 
-    public CheckoutModel(ProductCatalog catalog, OrderService orders)
+    public CheckoutModel(CartStore cartStore, OrderService orders)
     {
-        _catalog = catalog;
+        _cartStore = cartStore;
         _orders = orders;
     }
 
@@ -48,26 +47,7 @@ public class CheckoutModel : PageModel
         return RedirectToPage("/Order", new { id = order.Id });
     }
 
-    private Cart LoadCart()
-    {
-        var json = HttpContext.Session.GetString("cart");
-        if (string.IsNullOrEmpty(json))
-        {
-            return new Cart();
-        }
+    private Cart LoadCart() => _cartStore.Load(HttpContext.Session);
 
-        var snapshot = JsonSerializer.Deserialize<CartSnapshot>(json);
-        if (snapshot is null)
-        {
-            return new Cart();
-        }
-
-        return Cart.FromSnapshot(snapshot, _catalog);
-    }
-
-    private void SaveCart(Cart cart)
-    {
-        var json = JsonSerializer.Serialize(cart.ToSnapshot());
-        HttpContext.Session.SetString("cart", json);
-    }
+    private void SaveCart(Cart cart) => _cartStore.Save(HttpContext.Session, cart);
 }

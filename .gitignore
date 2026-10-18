@@ -8,6 +8,7 @@ TestResults/
 coveragereport/
 publish/
 artifacts/
+jscpd-report/
 
 # Отчёты нагрузочного теста и Playwright
 loadtests/*.html

@@ -23,6 +23,7 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddSingleton<ProductCatalog>();
 builder.Services.AddSingleton<OrderService>();
+builder.Services.AddSingleton<CartStore>();
 
 var app = builder.Build();
 

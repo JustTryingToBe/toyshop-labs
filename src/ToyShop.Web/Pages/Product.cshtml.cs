@@ -8,10 +8,12 @@ namespace ToyShop.Web.Pages;
 public class ProductModel : PageModel
 {
     private readonly ProductCatalog _catalog;
+    private readonly CartStore _cartStore;
 
-    public ProductModel(ProductCatalog catalog)
+    public ProductModel(ProductCatalog catalog, CartStore cartStore)
     {
         _catalog = catalog;
+        _cartStore = cartStore;
     }
 
     public Product Product { get; private set; } = null!;
@@ -45,26 +47,7 @@ public class ProductModel : PageModel
         return RedirectToPage("/Cart");
     }
 
-    private Cart LoadCart()
-    {
-        var json = HttpContext.Session.GetString("cart");
-        if (string.IsNullOrEmpty(json))
-        {
-            return new Cart();
-        }
+    private Cart LoadCart() => _cartStore.Load(HttpContext.Session);
 
-        var snapshot = JsonSerializer.Deserialize<CartSnapshot>(json);
-        if (snapshot is null)
-        {
-            return new Cart();
-        }
-
-        return Cart.FromSnapshot(snapshot, _catalog);
-    }
-
-    private void SaveCart(Cart cart)
-    {
-        var json = JsonSerializer.Serialize(cart.ToSnapshot());
-        HttpContext.Session.SetString("cart", json);
-    }
+    private void SaveCart(Cart cart) => _cartStore.Save(HttpContext.Session, cart);
 }
