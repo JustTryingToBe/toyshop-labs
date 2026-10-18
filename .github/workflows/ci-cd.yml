@@ -1,0 +1,124 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  VERSION: 1.0.${{ github.run_number }}
+  DOTNET_VERSION: '9.0.x'
+
+jobs:
+  build:
+    name: Сборка и тесты
+    runs-on: ubuntu-latest
+    steps:
+      - name: Получить код
+        uses: actions/checkout@v4
+
+      - name: Установить .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Сборка
+        run: dotnet build src/ToyShop.Web -c Release -p:Version=${{ env.VERSION }}
+
+      - name: Юнит-тесты с покрытием
+        run: >
+          dotnet test tests/ToyShop.Core.Tests -c Release
+          --collect:"XPlat Code Coverage"
+          --logger "trx;LogFileName=unit-tests.trx"
+          --results-directory TestResults
+
+      - name: Публикация приложения
+        run: dotnet publish src/ToyShop.Web -c Release -o publish -p:Version=${{ env.VERSION }}
+
+      - name: Упаковка в zip
+        run: cd publish && zip -qr "../toyshop-${VERSION}.zip" .
+
+      - name: Сохранить пакет
+        uses: actions/upload-artifact@v4
+        with:
+          name: toyshop-package
+          path: toyshop-${{ env.VERSION }}.zip
+
+      - name: Сохранить результаты тестов
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults
+
+  staging:
+    name: Развёртывание в Staging
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+    steps:
+      - name: Установить .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Скачать пакет из сборки
+        uses: actions/download-artifact@v4
+        with:
+          name: toyshop-package
+
+      - name: Развернуть и запустить
+        run: |
+          mkdir -p staging
+          unzip -q "toyshop-${VERSION}.zip" -d staging
+          cd staging
+          nohup dotnet ToyShop.Web.dll --urls http://localhost:5080 --environment Staging > ../app.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:5080/health > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat ../app.log
+          exit 1
+
+      - name: Смоук-тест
+        run: |
+          curl -sf http://localhost:5080/health | tee health.json
+          echo
+          grep -q "\"version\":\"${VERSION}\"" health.json
+          curl -sf http://localhost:5080/ | grep -q "Все игрушки"
+          echo "Смоук-тест пройден: версия ${VERSION} отвечает"
+
+      - name: Создать пререлиз на GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh release create "v${VERSION}" "toyshop-${VERSION}.zip"
+          --repo "${{ github.repository }}"
+          --target "${{ github.sha }}"
+          --title "ToyShop ${VERSION}"
+          --notes "Сборка №${{ github.run_number }}, коммит ${{ github.sha }}"
+          --prerelease
+
+  production:
+    name: Выпуск в Production
+    needs: staging
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ github.server_url }}/${{ github.repository }}/releases/tag/v${{ env.VERSION }}
+    steps:
+      - name: Сделать релиз стабильным
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh release edit "v${VERSION}"
+          --repo "${{ github.repository }}"
+          --prerelease=false
+          --latest
