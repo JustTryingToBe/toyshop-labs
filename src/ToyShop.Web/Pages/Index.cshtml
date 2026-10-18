@@ -1,0 +1,26 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = Model.SelectedCategory ?? "Каталог";
+}
+
+<h1>@(Model.SelectedCategory ?? "Все игрушки")</h1>
+
+<div class="categories">
+    <a href="/" class="@(Model.SelectedCategory is null ? "active" : "")">Все</a>
+    @foreach (var category in Model.Categories)
+    {
+        <a href="/?category=@Uri.EscapeDataString(category)" class="@(category == Model.SelectedCategory ? "active" : "")">@category</a>
+    }
+</div>
+
+<div class="grid">
+    @foreach (var p in Model.Products)
+    {
+        <a class="card" href="/Product/@p.Id" data-testid="product-card">
+            <div class="emoji">@p.Emoji</div>
+            <div class="name">@p.Name</div>
+            <div class="price">@Money.Format(p.Price)</div>
+        </a>
+    }
+</div>

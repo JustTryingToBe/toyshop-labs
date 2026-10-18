@@ -1,0 +1,35 @@
+@page "{id:int}"
+@model ProductModel
+@{
+    ViewData["Title"] = Model.Product.Name;
+}
+
+<div class="product">
+    <div class="emoji big">@Model.Product.Emoji</div>
+    <div>
+        <h1 data-testid="product-name">@Model.Product.Name</h1>
+        <p class="muted">Категория: <a href="/?category=@Uri.EscapeDataString(Model.Product.Category)">@Model.Product.Category</a></p>
+        <p>@Model.Product.Description</p>
+        <p class="price big" data-testid="product-price">@Money.Format(Model.Product.Price)</p>
+        <form method="post" asp-page-handler="Add" asp-route-id="@Model.Product.Id">
+            <label for="quantity">Количество</label>
+            <input id="quantity" name="quantity" type="number" min="1" max="99" value="1" />
+            <button type="submit">В корзину</button>
+        </form>
+    </div>
+</div>
+
+@if (Model.Related.Count > 0)
+{
+    <h2>Вам также может понравиться</h2>
+    <div class="grid">
+        @foreach (var p in Model.Related)
+        {
+            <a class="card" href="/Product/@p.Id" data-testid="related-card">
+                <div class="emoji">@p.Emoji</div>
+                <div class="name">@p.Name</div>
+                <div class="price">@Money.Format(p.Price)</div>
+            </a>
+        }
+    </div>
+}

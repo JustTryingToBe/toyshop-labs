@@ -1,0 +1,42 @@
+@page
+@model CheckoutModel
+@{
+    ViewData["Title"] = "Оформление заказа";
+}
+
+<h1>Оформление заказа</h1>
+
+@if (Model.Cart.IsEmpty)
+{
+    <p>Корзина пуста. <a href="/">Перейти в каталог</a></p>
+}
+else
+{
+    <p>К оплате: <strong data-testid="checkout-total">@Money.Format(Model.Cart.Total)</strong> (товаров: @Model.Cart.ItemCount)</p>
+
+    @if (Model.Errors.Count > 0)
+    {
+        <ul class="errors" data-testid="errors">
+            @foreach (var error in Model.Errors)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    }
+
+    <form method="post" class="form">
+        <label asp-for="Customer.Name">Имя</label>
+        <input asp-for="Customer.Name" />
+
+        <label asp-for="Customer.Email">E-mail</label>
+        <input asp-for="Customer.Email" type="text" />
+
+        <label asp-for="Customer.Phone">Телефон</label>
+        <input asp-for="Customer.Phone" />
+
+        <label asp-for="Customer.Address">Адрес доставки</label>
+        <textarea asp-for="Customer.Address"></textarea>
+
+        <button type="submit">Подтвердить заказ</button>
+    </form>
+}

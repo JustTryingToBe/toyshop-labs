@@ -1,0 +1,59 @@
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Env
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] — Магазин игрушек</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; color: #1f2933; background: #f6f7fb; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #2f3e9e; color: #fff; }
+        header a { color: #fff; text-decoration: none; margin-left: 18px; }
+        header .logo { font-size: 20px; font-weight: 600; margin-left: 0; }
+        main { max-width: 980px; margin: 0 auto; padding: 24px 28px 60px; }
+        footer { text-align: center; color: #6b7280; font-size: 13px; padding: 16px; border-top: 1px solid #e5e7eb; }
+        h1 { margin-top: 0; }
+        a { color: #2f3e9e; }
+        .categories a { display: inline-block; padding: 6px 14px; margin: 0 6px 16px 0; border-radius: 16px; background: #e0e4f7; text-decoration: none; }
+        .categories a.active { background: #2f3e9e; color: #fff; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+        .card { display: block; background: #fff; border-radius: 10px; padding: 16px; text-decoration: none; color: inherit; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+        .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+        .emoji { font-size: 48px; }
+        .emoji.big { font-size: 120px; }
+        .name { font-weight: 600; margin: 8px 0; }
+        .price { color: #0f766e; font-weight: 600; }
+        .price.big { font-size: 26px; }
+        .muted { color: #6b7280; }
+        .product { display: flex; gap: 32px; align-items: flex-start; background: #fff; padding: 24px; border-radius: 10px; margin-bottom: 24px; }
+        button, .button { display: inline-block; padding: 9px 18px; border: 0; border-radius: 6px; background: #2f3e9e; color: #fff; font-size: 15px; cursor: pointer; text-decoration: none; }
+        button.link { background: none; color: #b91c1c; padding: 0; }
+        input, textarea { padding: 8px; border: 1px solid #cbd2d9; border-radius: 6px; font-size: 15px; }
+        table.cart { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; }
+        table.cart th, table.cart td { padding: 10px; text-align: left; border-bottom: 1px solid #eef0f4; }
+        .promo { margin: 18px 0; }
+        .msg { color: #0f766e; }
+        .totals { display: grid; grid-template-columns: 140px auto; gap: 6px; margin: 18px 0; }
+        .totals dd { margin: 0; }
+        .form { display: grid; grid-template-columns: 160px 360px; gap: 10px; align-items: center; }
+        .form button { grid-column: 2; justify-self: start; }
+        .errors { color: #b91c1c; }
+    </style>
+</head>
+<body>
+    <header>
+        <a class="logo" href="/">🧸 Магазин игрушек</a>
+        <nav>
+            <a href="/">Каталог</a>
+            <a href="/Cart" data-testid="nav-cart">Корзина</a>
+        </nav>
+    </header>
+    <main>
+        @RenderBody()
+    </main>
+    <footer data-testid="footer">
+        Магазин игрушек · версия <span data-testid="app-version">@AppInfo.Version</span> · среда: @Env.EnvironmentName
+    </footer>
+</body>
+</html>

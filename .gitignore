@@ -1,0 +1,14 @@
+# Visual Studio / .NET
+.vs/
+bin/
+obj/
+*.user
+*.suo
+TestResults/
+coveragereport/
+publish/
+artifacts/
+
+# Отчёты нагрузочного теста и Playwright
+loadtests/*.html
+playwright-traces/

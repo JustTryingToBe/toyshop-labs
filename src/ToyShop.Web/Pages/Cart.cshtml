@@ -1,0 +1,56 @@
+@page
+@model CartModel
+@{
+    ViewData["Title"] = "Корзина";
+}
+
+<h1>Корзина</h1>
+
+@if (Model.Cart.IsEmpty)
+{
+    <p data-testid="cart-empty">Корзина пуста. <a href="/">Перейти в каталог</a></p>
+}
+else
+{
+    <table class="cart">
+        <thead>
+            <tr><th>Товар</th><th>Цена</th><th>Кол-во</th><th>Сумма</th><th></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var line in Model.Cart.Lines)
+            {
+                <tr data-testid="cart-line">
+                    <td><a href="/Product/@line.Product.Id">@line.Product.Name</a></td>
+                    <td>@Money.Format(line.Product.Price)</td>
+                    <td>@line.Quantity</td>
+                    <td>@Money.Format(line.LineTotal)</td>
+                    <td>
+                        <form method="post" asp-page-handler="Remove" asp-route-id="@line.Product.Id">
+                            <button class="link" type="submit">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <form method="post" asp-page-handler="Promo" class="promo">
+        <label for="promoCode">Промокод</label>
+        <input id="promoCode" name="promoCode" value="@Model.Cart.AppliedPromoCode" />
+        <button type="submit">Применить</button>
+    </form>
+
+    @if (Model.Message is not null)
+    {
+        <p class="msg" data-testid="promo-message">@Model.Message</p>
+    }
+
+    <dl class="totals">
+        <dt>Товары</dt><dd data-testid="subtotal">@Money.Format(Model.Cart.Subtotal)</dd>
+        <dt>Скидка</dt><dd data-testid="discount">@Money.Format(Model.Cart.Discount)</dd>
+        <dt>Доставка</dt><dd data-testid="shipping">@Money.Format(Model.Cart.Shipping)</dd>
+        <dt>Итого</dt><dd><strong data-testid="total">@Money.Format(Model.Cart.Total)</strong></dd>
+    </dl>
+
+    <a class="button" href="/Checkout">Оформить заказ</a>
+}

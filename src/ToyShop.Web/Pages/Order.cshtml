@@ -1,0 +1,9 @@
+@page "{id:int}"
+@model OrderModel
+@{
+    ViewData["Title"] = "Заказ оформлен";
+}
+
+<h1 data-testid="order-confirmation">Заказ № @(Model.Order.Id) оформлен</h1>
+<p>Спасибо, @(Model.Order.CustomerName)! Сумма заказа: <strong data-testid="order-total">@Money.Format(Model.Order.Total)</strong>.</p>
+<p><a href="/">Вернуться в каталог</a></p>
