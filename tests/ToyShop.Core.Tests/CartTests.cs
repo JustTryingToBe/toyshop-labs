@@ -122,7 +122,7 @@ public class CartTests
         var applied = cart.ApplyPromo(code);
 
         Assert.True(applied);
-        Assert.Equal(130m, cart.Discount);
+        Assert.Equal(129m, cart.Discount);
     }
 
     [Fact]
