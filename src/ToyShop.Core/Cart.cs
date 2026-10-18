@@ -100,7 +100,7 @@ public class Cart
                 return 0m;
             }
 
-            return Subtotal > FreeShippingThreshold ? 0m : ShippingCost;
+            return Subtotal >= FreeShippingThreshold ? 0m : ShippingCost;
         }
     }
 

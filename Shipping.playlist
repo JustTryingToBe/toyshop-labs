@@ -1,0 +1,48 @@
+<Playlist Version="2.0">
+  <Rule Name="Includes" Match="Any">
+    <Rule Match="All">
+      <Property Name="Solution" />
+      <Rule Match="Any">
+        <Rule Match="All">
+          <Property Name="Project" Value="ToyShop.Core.Tests" />
+          <Rule Match="Any">
+            <Rule Match="All">
+              <Property Name="Namespace" Value="ToyShop.Core.Tests" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="CartTests" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ToyShop.Core.Tests.CartTests.Shipping_AboveThreshold_IsFree" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ToyShop.Core.Tests.CartTests.Shipping_AboveThreshold_IsFree" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ToyShop.Core.Tests.CartTests.Shipping_BelowThreshold_IsCharged" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ToyShop.Core.Tests.CartTests.Shipping_BelowThreshold_IsCharged" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ToyShop.Core.Tests.CartTests.Shipping_EmptyCart_IsZero" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ToyShop.Core.Tests.CartTests.Shipping_EmptyCart_IsZero" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ToyShop.Core.Tests.CartTests.Shipping_ExactlyThreshold_IsFree" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ToyShop.Core.Tests.CartTests.Shipping_ExactlyThreshold_IsFree" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+          </Rule>
+        </Rule>
+      </Rule>
+    </Rule>
+  </Rule>
+</Playlist>
